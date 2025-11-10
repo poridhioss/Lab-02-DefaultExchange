@@ -15,25 +15,25 @@ let channel = null;
  */
 async function initRabbitMQ() {
   try {
-    console.log('📡 Connecting to RabbitMQ...');
+    console.log('Connecting to RabbitMQ...');
     
     // Establish connection to RabbitMQ server
     connection = await amqp.connect(config.rabbitmq.url);
     
     // Handle connection errors
     connection.on('error', (err) => {
-      console.error('❌ Connection error:', err.message);
+      console.error('Connection error:', err.message);
     });
     
     connection.on('close', () => {
-      console.log('⚠️  Connection closed. Reconnecting...');
+      console.log('Connection closed. Reconnecting...');
       setTimeout(initRabbitMQ, 5000);
     });
 
     // Create a channel for communication
     channel = await connection.createChannel();
     
-    console.log('✅ Connected to RabbitMQ');
+    console.log('Connected to RabbitMQ');
 
     // Declare the task queue with durable option
     // This ensures the queue persists across RabbitMQ restarts
@@ -44,7 +44,7 @@ async function initRabbitMQ() {
     
     console.log(`📋 Queue '${config.rabbitmq.queues.tasks}' is ready`);
   } catch (error) {
-    console.error('❌ Failed to initialize RabbitMQ:', error.message);
+    console.error('Failed to initialize RabbitMQ:', error.message);
     process.exit(1);
   }
 }
@@ -75,14 +75,14 @@ async function publishTask(taskType, taskData) {
     );
 
     if (published) {
-      console.log(`✉️  Task published: ${task.id} (${taskType})`);
+      console.log(`Task published: ${task.id} (${taskType})`);
       return { success: true, taskId: task.id };
     } else {
-      console.log('⚠️  Message buffer full, waiting...');
+      console.log('Message buffer full, waiting...');
       return { success: false, error: 'Buffer full' };
     }
   } catch (error) {
-    console.error('❌ Failed to publish task:', error.message);
+    console.error('Failed to publish task:', error.message);
     return { success: false, error: error.message };
   }
 }
@@ -225,8 +225,8 @@ async function start() {
     await initRabbitMQ();
 
     app.listen(config.api.port, () => {
-      console.log(`🚀 Task Producer API running on port ${config.api.port}`);
-      console.log(`📝 Available endpoints:`);
+      console.log(`Task Producer API running on port ${config.api.port}`);
+      console.log(`Available endpoints:`);
       console.log(`   POST   http://localhost:${config.api.port}/api/tasks`);
       console.log(`   POST   http://localhost:${config.api.port}/api/tasks/batch`);
       console.log(`   GET    http://localhost:${config.api.port}/api/tasks/types`);
@@ -240,7 +240,7 @@ async function start() {
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('\nShutting down gracefully...');
   if (channel) await channel.close();
   if (connection) await connection.close();
   process.exit(0);

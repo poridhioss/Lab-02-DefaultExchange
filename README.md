@@ -12,29 +12,6 @@ Type: Direct exchange
 Pre-declared: Always exists, cannot be deleted
 Implicit Binding: Every queue is automatically bound to it with the queue name as the routing key
 
-How Default Exchange Works
-
-```bash
-┌─────────────────────────────────────────────────────────┐
-│                    DEFAULT EXCHANGE                      │
-│                    (name = "")                           │
-│                                                          │
-│  Automatic Bindings:                                     │
-│  ┌────────────────────────────────────────────┐        │
-│  │ Queue Name    →    Routing Key             │        │
-│  │ "emails"      →    "emails"                │        │
-│  │ "orders"      →    "orders"                │        │
-│  │ "notifications" → "notifications"          │        │
-│  └────────────────────────────────────────────┘        │
-└─────────────────────────────────────────────────────────┘
-         │                    │                    │
-         ▼                    ▼                    ▼
-    ┌────────┐          ┌────────┐          ┌────────┐
-    │ emails │          │ orders │          │ notif. │
-    │ Queue  │          │ Queue  │          │ Queue  │
-    └────────┘          └────────┘          └────────┘
-```
-
 Publishing to Default Exchange
 
 

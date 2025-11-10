@@ -89,7 +89,7 @@ async function runLoadTest(options) {
     delayBetweenBatches = 1000,
   } = options;
 
-  console.log('🚀 Starting Load Test');
+  console.log('Starting Load Test');
   console.log(`   Total Tasks: ${totalTasks}`);
   console.log(`   Batch Size: ${batchSize}`);
   console.log(`   Delay Between Batches: ${delayBetweenBatches}ms\n`);
@@ -101,7 +101,7 @@ async function runLoadTest(options) {
   for (let i = 0; i < batches; i++) {
     const currentBatchSize = Math.min(batchSize, totalTasks - (i * batchSize));
     
-    console.log(`📦 Batch ${i + 1}/${batches} - Submitting ${currentBatchSize} tasks...`);
+    console.log(`Batch ${i + 1}/${batches} - Submitting ${currentBatchSize} tasks...`);
     
     const result = await submitBatch(currentBatchSize);
     
@@ -109,10 +109,10 @@ async function runLoadTest(options) {
       const batchSuccessCount = result.data.results.filter(r => r.success).length;
       successCount += batchSuccessCount;
       failCount += currentBatchSize - batchSuccessCount;
-      console.log(`   ✅ Batch completed: ${batchSuccessCount}/${currentBatchSize} successful`);
+      console.log(`   Batch completed: ${batchSuccessCount}/${currentBatchSize} successful`);
     } else {
       failCount += currentBatchSize;
-      console.log(`   ❌ Batch failed:`, result.error);
+      console.log(`   Batch failed:`, result.error);
     }
 
     // Delay before next batch
@@ -121,7 +121,7 @@ async function runLoadTest(options) {
     }
   }
 
-  console.log(`\n📊 Load Test Complete:`);
+  console.log(`\nLoad Test Complete:`);
   console.log(`   Total Submitted: ${totalTasks}`);
   console.log(`   Successful: ${successCount}`);
   console.log(`   Failed: ${failCount}`);
@@ -152,7 +152,7 @@ async function interactiveMode() {
     const choice = input.trim();
 
     if (choice === 'q') {
-      console.log('👋 Goodbye!');
+      console.log('Goodbye!');
       rl.close();
       process.exit(0);
     }
@@ -170,7 +170,7 @@ async function interactiveMode() {
     const index = parseInt(choice) - 1;
     if (index >= 0 && index < taskTypes.length) {
       const taskType = taskTypes[index];
-      console.log(`\n📤 Submitting ${taskType} task...`);
+      console.log(`\nSubmitting ${taskType} task...`);
       
       const result = await submitTask(taskType);
       

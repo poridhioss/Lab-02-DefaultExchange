@@ -15,24 +15,24 @@ let failedCount = 0;
  */
 async function initWorker() {
   try {
-    console.log(`👷 ${workerId} - Starting...`);
+    console.log(`${workerId} - Starting...`);
     
     // Connect to RabbitMQ
     connection = await amqp.connect(config.rabbitmq.url);
     
     connection.on('error', (err) => {
-      console.error(`❌ ${workerId} - Connection error:`, err.message);
+      console.error(`${workerId} - Connection error:`, err.message);
     });
     
     connection.on('close', () => {
-      console.log(`⚠️  ${workerId} - Connection closed. Reconnecting...`);
+      console.log(`${workerId} - Connection closed. Reconnecting...`);
       setTimeout(initWorker, 5000);
     });
 
     // Create channel
     channel = await connection.createChannel();
     
-    console.log(`✅ ${workerId} - Connected to RabbitMQ`);
+    console.log(`${workerId} - Connected to RabbitMQ`);
 
     // Declare the queue (idempotent operation)
     await channel.assertQueue(
@@ -45,8 +45,8 @@ async function initWorker() {
     // Workers don't get a new message until they acknowledge the current one
     await channel.prefetch(config.rabbitmq.prefetchCount);
     
-    console.log(`📊 ${workerId} - Prefetch count set to ${config.rabbitmq.prefetchCount}`);
-    console.log(`🎯 ${workerId} - Waiting for tasks from '${config.rabbitmq.queues.tasks}'...`);
+    console.log(`${workerId} - Prefetch count set to ${config.rabbitmq.prefetchCount}`);
+    console.log(`${workerId} - Waiting for tasks from '${config.rabbitmq.queues.tasks}'...`);
 
     // Start consuming messages
     channel.consume(
@@ -58,7 +58,7 @@ async function initWorker() {
     // Display stats every 30 seconds
     setInterval(displayStats, 30000);
   } catch (error) {
-    console.error(`❌ ${workerId} - Failed to initialize:`, error.message);
+    console.error(`${workerId} - Failed to initialize:`, error.message);
     process.exit(1);
   }
 }
@@ -69,7 +69,7 @@ async function initWorker() {
  */
 async function handleTask(msg) {
   if (msg === null) {
-    console.log(`⚠️  ${workerId} - Consumer cancelled`);
+    console.log(`${workerId} - Consumer cancelled`);
     return;
   }
 
@@ -79,7 +79,7 @@ async function handleTask(msg) {
     // Parse task from message
     const task = JSON.parse(msg.content.toString());
     
-    console.log(`\n📨 ${workerId} - Received task: ${task.id}`);
+    console.log(`\n${workerId} - Received task: ${task.id}`);
     console.log(`   Type: ${task.type}`);
     console.log(`   Created: ${task.createdAt}`);
 
@@ -90,14 +90,14 @@ async function handleTask(msg) {
       throw new Error(`Unknown task type: ${task.type}`);
     }
 
-    console.log(`⚙️  ${workerId} - Processing ${task.type}...`);
+    console.log(`${workerId} - Processing ${task.type}...`);
 
     // Execute task processor
     const result = await processor.process(task.data);
 
     const duration = Date.now() - startTime;
     
-    console.log(`✅ ${workerId} - Task completed: ${task.id}`);
+    console.log(`${workerId} - Task completed: ${task.id}`);
     console.log(`   Duration: ${duration}ms`);
     console.log(`   Result:`, result);
 
@@ -110,7 +110,7 @@ async function handleTask(msg) {
   } catch (error) {
     const duration = Date.now() - startTime;
     
-    console.error(`❌ ${workerId} - Task failed after ${duration}ms`);
+    console.error(`${workerId} - Task failed after ${duration}ms`);
     console.error(`   Error: ${error.message}`);
 
     // IMPORTANT: Negative acknowledgment
@@ -126,7 +126,7 @@ async function handleTask(msg) {
  * Display worker statistics
  */
 function displayStats() {
-  console.log(`\n📊 ${workerId} - Statistics:`);
+  console.log(`\n${workerId} - Statistics:`);
   console.log(`   Processed: ${processedCount}`);
   console.log(`   Failed: ${failedCount}`);
   console.log(`   Success Rate: ${processedCount > 0 ? ((processedCount / (processedCount + failedCount)) * 100).toFixed(2) : 0}%`);
@@ -135,7 +135,7 @@ function displayStats() {
 // ============ GRACEFUL SHUTDOWN ============
 
 async function shutdown() {
-  console.log(`\n🛑 ${workerId} - Shutting down gracefully...`);
+  console.log(`\n${workerId} - Shutting down gracefully...`);
   
   displayStats();
   
@@ -149,7 +149,7 @@ async function shutdown() {
     await connection.close();
   }
   
-  console.log(`👋 ${workerId} - Shutdown complete`);
+  console.log(`${workerId} - Shutdown complete`);
   process.exit(0);
 }
 
